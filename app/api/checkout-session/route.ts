@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  // @ts-ignore
-  apiVersion: '2022-11-15',
-})
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
-const formatAmountForStripe = (amount: number, currency: string) => {
+const formatAmountForStripe = (amount: number) => {
   return Math.round(amount * 100)
 }
 
-async function createCheckoutSession(req: Request) {
+async function createCheckoutSession(request: Request) {  
+  const originUrl = request.headers.get('Origin')
+  if (!originUrl) {
+    throw new Error('Origin header is missing')
+  }
+  
   const params: Stripe.Checkout.SessionCreateParams = {
     mode: 'subscription',
     payment_method_types: ['card'],
@@ -19,9 +21,9 @@ async function createCheckoutSession(req: Request) {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Pro subscription',
+            name: 'Pro subscription', // TODO: Make this dynamic based on the plan chosen
           },
-          unit_amount: formatAmountForStripe(10, 'usd'), // $10.00
+          unit_amount: formatAmountForStripe(10), // $10.00 // TODO: Make this dynamic based on the plan chosen
           recurring: {
             interval: 'month',
             interval_count: 1,
@@ -30,25 +32,17 @@ async function createCheckoutSession(req: Request) {
         quantity: 1,
       },
     ],
-    success_url: `${req.headers.get(
-      'Referer',
-    )}result?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${req.headers.get(
-      'Referer',
-    )}result?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${originUrl}/result?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${originUrl}/result?session_id={CHECKOUT_SESSION_ID}`,
   }
 
   return await stripe.checkout.sessions.create(params)
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    /*
-    // Create a new checkout session
-    const checkoutSession = await createCheckoutSession(req)
+    const checkoutSession = await createCheckoutSession(request)
     return NextResponse.json(checkoutSession, { status: 200 })
-    */
-    return NextResponse.json({ error: { message: 'Unavailable' } }, { status: 400 })
   } catch (error) {
     console.error('Error creating checkout session:', error)
     return new NextResponse(JSON.stringify({ error: { message: (error as Error).message } }), {
@@ -57,17 +51,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
-  const searchParams = req.nextUrl.searchParams
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams
   const session_id = searchParams.get('session_id')
 
   try {
     if (!session_id) {
       throw new Error('Session ID is required')
     }
-
     const checkoutSession = await stripe.checkout.sessions.retrieve(session_id)
-
     return NextResponse.json(checkoutSession)
   } catch (error) {
     console.error('Error retrieving checkout session:', error)

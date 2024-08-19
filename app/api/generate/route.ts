@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { tryParseJSON } from '@/lib/utils'
 
-const systemPrompt = `
+const SYSTEM_PROMPT = `
 You are a flashcard creator, you take in text and create multiple flashcards from it. Make sure to create exactly 10 flashcards.
 Both front and back should be one sentence long.
 You should return in the following JSON format:
 {
-  "flashcards":[
+  "flashcards": [
     {
       "front": "Front of the card",
       "back": "Back of the card"
@@ -24,13 +25,17 @@ interface Flashcard {
   back: string
 }
 
-export async function POST(req: NextRequest) {
+const DEFAULT_CHAT_RESPONSE: ChatResponse = {
+  flashcards: []
+}
+
+export async function POST(request: NextRequest) {
   const openai = new OpenAI()
-  const data = await req.text()
+  const data = await request.text()
 
   const completion = await openai.chat.completions.create({
     messages: [
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: data },
     ],
     model: 'gpt-4o',
@@ -38,8 +43,8 @@ export async function POST(req: NextRequest) {
   })
 
   // Parse the JSON response from the OpenAI API
-  const flashcards: ChatResponse = JSON.parse(completion.choices[0].message.content ?? '{}')
+  const result: ChatResponse = tryParseJSON(completion.choices[0].message.content) ?? DEFAULT_CHAT_RESPONSE
 
   // Return the flashcards as a JSON response
-  return NextResponse.json(flashcards.flashcards)
+  return NextResponse.json(result.flashcards)
 }
