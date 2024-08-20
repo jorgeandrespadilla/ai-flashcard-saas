@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Card, CardActionArea, TextField, Container, Typography, Paper, Button, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CardContent } from '@mui/material';
 import { Box } from '@mui/system';
@@ -8,6 +8,9 @@ import { useRouter } from 'next/navigation';
 import { writeBatch, doc, collection, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase'
 import { CardFlipStatus, FlashcardData, FlashcardCollection } from '@/lib/types';
+import { StickyHeader } from '../../page';
+import { ArrowDownToLine, ChevronRight, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function Generate() {
   const { user } = useUser();
@@ -17,6 +20,7 @@ export default function Generate() {
   const [text, setText] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
+  const stickyNavRef = useRef<HTMLElement>(null);
 
   const handleSubmit = async () => {
     fetch('api/generate', {
@@ -77,133 +81,147 @@ export default function Generate() {
   };
 
   return (
-    <Container maxWidth="md">
-      <Box
-        sx={{
-          mt: 4,
-          mb: 6,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography variant="h4">Generate Flashcards</Typography>
-        <Paper sx={{ p: 4, width: '100%' }}>
-          <TextField
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            label="Enter text"
-            fullWidth
-            multiline
-            rows={4}
-            variant="outlined"
-            sx={{
-              mb: 2,
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            fullWidth
-          >
-            Submit
-          </Button>
-        </Paper>
-      </Box>
+    <div className=' bg-gray-100 w-full min-h-screen'>
+      <Container maxWidth="md">
+        <header ref={stickyNavRef}>
+          <StickyHeader containerRef={stickyNavRef} />
+        </header>
+        <div className="flex flex-col items-center mt-16 mb-24">
+          <h1 className="text-4xl font-bold text-center mb-6">Generate Flashcards</h1>
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full">
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Enter text"
+              rows={4}
+              className="w-full p-4 border border-gray-300 rounded-lg mb-4"
+            />
+            <button
+              onClick={handleSubmit}
+              className={cn(
+                // layout
+                "group relative border inline-flex h-9 w-full items-center justify-center gap-2 overflow-hidden whitespace-pre rounded-md px-4 py-2 text-base font-semibold tracking-tighter focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 md:flex",
 
-      {flashcards.length > 0 && (
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h5">Flashcards Preview</Typography>
-          <Grid container spacing={3}>
-            {flashcards.map((flashcard, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card>
-                  <CardActionArea
-                    onClick={() => {
-                      handleCardClick(index);
-                    }}
-                  >
-                    <CardContent>
-                      <Box
-                        sx={{
-                          perspective: '1000px',
-                          '& > div': {
-                            transition: 'transform 0.6s',
-                            transformStyle: 'preserve-3d',
-                            position: 'relative',
-                            width: '100%',
-                            height: '200px',
-                            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-                            transform: flipped[index]
-                              ? 'rotateY(180deg)'
-                              : 'rotateY(0deg)',
-                          },
-                          '& > div > div': {
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                            backfaceVisibility: 'hidden',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            padding: 2,
-                            boxSizing: 'border-box',
-                          },
-                          '& > div > div:nth-of-type(2)': {
-                            transform: 'rotateY(180deg)',
-                          }
-                        }}
-                      >
-                        <div>
-                          <div>
-                            <Typography variant="h5" component="div">
-                              {flashcard.front}
-                            </Typography>
-                          </div>
-                          <div>
-                            <Typography variant="h5" component="div">
-                              {flashcard.back}
-                            </Typography>
-                          </div>
-                        </div>
-                      </Box>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-            <Button variant="contained" color="secondary" onClick={handleOpen}>
-              Save
-            </Button>
-          </Box>
-        </Box>
-      )}
+                // animation
+                "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2"
+              )}
+            >
+              <span className="w-full text-center font-bold bg-gradient-to-b from-[#ffd319] via-[#ff2975] to-[#8c1eff] bg-clip-text text-transparent">
+                Submit
+              </span>
+              <Zap className="size-4 translate-x-0 transition-all duration-300 ease-out group-hover:translate-x-1" />
+            </button>
+          </div>
+        </div>
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Save Flashcards</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please enter a name for your flashcards collection
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Collection Name"
-            type="text"
-            fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            variant="outlined"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={saveFlashcards}>Save</Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        {flashcards.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-3xl font-semibold text-center mb-6">Flashcards Preview</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {flashcards.map((flashcard, index) => (
+                <div key={index} className="relative">
+                  <Card>
+                    <CardActionArea
+                      onClick={() => {
+                        handleCardClick(index);
+                      }}
+                    >
+                      <CardContent>
+                        <Box
+                          sx={{
+                            perspective: '1000px',
+                            '& > div': {
+                              transition: 'transform 0.6s',
+                              transformStyle: 'preserve-3d',
+                              position: 'relative',
+                              width: '100%',
+                              height: '200px',
+                              boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+                              transform: flipped[index]
+                                ? 'rotateY(180deg)'
+                                : 'rotateY(0deg)',
+                            },
+                            '& > div > div': {
+                              position: 'absolute',
+                              width: '100%',
+                              height: '100%',
+                              backfaceVisibility: 'hidden',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              padding: 2,
+                              boxSizing: 'border-box',
+                            },
+                            '& > div > div:nth-of-type(2)': {
+                              transform: 'rotateY(180deg)',
+                            },
+                          }}
+                        >
+                          <div>
+                            <div>
+                              <Typography variant="h5" component="div">
+                                {flashcard.front}
+                              </Typography>
+                            </div>
+                            <div>
+                              <Typography variant="h5" component="div">
+                                {flashcard.back}
+                              </Typography>
+                            </div>
+                          </div>
+                        </Box>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 flex justify-center">
+
+              <button
+                onClick={handleOpen}
+                className={cn(
+                  // layout
+                  "group relative border inline-flex h-9 w-full items-center justify-center gap-2 overflow-hidden whitespace-pre rounded-md px-4 py-2 text-base font-semibold tracking-tighter focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 md:flex",
+
+                  // animation
+                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2"
+                )}
+              >
+                <span className="w-full text-center font-bold bg-gradient-to-b from-[#ffd319] via-[#ff2975] to-[#8c1eff] bg-clip-text text-transparent">
+                  Save
+                </span>
+                <ArrowDownToLine className="size-4 translate-x-0 transition-all duration-300 ease-out group-hover:translate-x-1" />
+              </button>
+            </div>
+            <br />
+            <br />
+          </div>
+        )}
+
+        <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${open ? 'block' : 'hidden'}`}>
+          <div className="bg-white rounded-lg p-8 max-w-sm w-full">
+            <h3 className="text-xl font-semibold mb-4">Save Flashcards</h3>
+            <p className="text-gray-700 mb-4">Please enter a name for your flashcards collection</p>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border rounded-md mb-4"
+              placeholder="Collection Name"
+            />
+            <div className="flex justify-end gap-4">
+              <button onClick={handleClose} className="bg-gray-300 py-2 px-4 rounded-md hover:bg-gray-400 transition-colors">
+                Cancel
+              </button>
+              <button onClick={saveFlashcards} className="bg-pink-400 text-white py-2 px-4 rounded-md hover:bg-pink-600 transition-colors">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
+
   );
 }

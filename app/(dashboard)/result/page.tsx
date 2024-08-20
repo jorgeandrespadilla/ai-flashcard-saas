@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Box, CircularProgress, Container, Typography } from "@mui/material"
+import { ChevronLeft } from "lucide-react"
 
 const formatAmmountForStripe = (amount: number) => {
   // Convert amount from cents to dollars and return as 2 decimal places
@@ -75,31 +76,34 @@ const ResultPage = () => {
   }
 
   return (
-    <Container sx={{
-      maxWidth: '100vw',
-      textAlign: 'center',
-      mt: 4
-    }}>
-      {
-        session && session.payment_status === 'paid' ? (
-          <>
-            <Typography variant="h4">Thank you for your payment</Typography>
-            <Box sx={{ mt: 22 }}>
-              <Typography variant="h6">ID: {session.id}</Typography>
-              <Typography variant="h6">Amount: {formatAmmountForStripe(session.amount_total)}</Typography>
-              <Typography variant="body1" mt={2}>You will receive an email confirmation shortly.</Typography>
-            </Box>
-          </>
-        ) : (
-          <>
-            <Typography variant="h4">Payment failed</Typography>
-            <Box sx={{ mt: 22 }}>
-              <Typography variant="body1">Your payment was not successful. Please try again.</Typography>
-            </Box>
-          </>
-        )
-      }
-    </Container>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6 text-center">
+      <div className="w-full max-w-screen-lg flex justify-start">
+        <a
+          href="/"
+          className="text-blue-500 hover:text-blue-700 mb-4 flex items-center"
+        >
+          <ChevronLeft className="w-5 h-5 mr-2" />
+          Back
+        </a>
+      </div>
+      {session && session.payment_status === 'paid' ? (
+        <>
+          <h1 className="text-4xl font-bold text-green-600 mb-8">Thank you for your payment</h1>
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg break-words">
+            <p className="text-xl font-semibold mb-4">ID: {session.id}</p>
+            <p className="text-xl font-semibold mb-4">Amount: {formatAmmountForStripe(session.amount_total)}</p>
+            <p className="text-lg text-gray-600">You will receive an email confirmation shortly.</p>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1 className="text-4xl font-bold text-red-600 mb-8">Payment failed</h1>
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+            <p className="text-lg text-gray-600">Your payment was not successful. Please try again.</p>
+          </div>
+        </>
+      )}
+    </div>
   )
 }
 
