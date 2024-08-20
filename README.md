@@ -2,6 +2,8 @@
 
 This project is an AI-powered flashcard application that helps you learn and remember information more effectively. This app was built using Next.js, Clerk, Firebase, OpenAI and Stripe.
 
+> This project was initially developed using JavaScript. The original repository can be found [here](https://github.com/gabrielapadilla06/flashcards).
+
 ## Getting Started
 
 1. Clone the repository.
