@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { tryParseJSON } from '@/lib/utils'
+import { FlashcardData } from '@/lib/types'
 
 const SYSTEM_PROMPT = `
 You are a flashcard creator, you take in text and create multiple flashcards from it. Make sure to create exactly 10 flashcards.
@@ -17,12 +18,7 @@ You should return in the following JSON format:
 `
 
 interface ChatResponse {
-  flashcards: Flashcard[]
-}
-
-interface Flashcard {
-  front: string
-  back: string
+  flashcards: FlashcardData[]
 }
 
 const DEFAULT_CHAT_RESPONSE: ChatResponse = {
