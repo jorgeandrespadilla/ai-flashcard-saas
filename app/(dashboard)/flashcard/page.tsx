@@ -83,7 +83,7 @@ export default function Flashcard() {
                     handleCardClick(index);
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ p: 0 }}>
                     <Box
                       sx={{
                         perspective: '1000px',
@@ -106,7 +106,8 @@ export default function Flashcard() {
                           display: 'flex',
                           justifyContent: 'center',
                           alignItems: 'center',
-                          padding: 2,
+                          px: 4,
+                          py: 2,
                           boxSizing: 'border-box',
                         },
                         '& > div > div:nth-of-type(2)': {
@@ -115,13 +116,19 @@ export default function Flashcard() {
                       }}
                     >
                       <div>
-                        <div>
-                          <Typography variant="h5" component="div">
+                        <div className="flex flex-col gap-1 text-center">
+                          <Typography variant="h6" component="div" fontWeight={600} className='bg-gradient-to-b from-[#ffd319] via-[#ff2975] to-[#8c1eff] bg-clip-text leading-none text-transparent'>
+                            Question
+                          </Typography>
+                          <Typography variant="h6" component="div">
                             {flashcard.front}
                           </Typography>
                         </div>
-                        <div>
-                          <Typography variant="h5" component="div">
+                        <div className="flex flex-col gap-1 text-center">
+                          <Typography variant="h6" component="div" fontWeight={600} className='bg-gradient-to-b from-[#ffd319] via-[#ff2975] to-[#8c1eff] bg-clip-text leading-none text-transparent'>
+                            Answer
+                          </Typography>
+                          <Typography variant="body1" component="div">
                             {flashcard.back}
                           </Typography>
                         </div>
@@ -134,8 +141,8 @@ export default function Flashcard() {
           ))}
         </div>
       </div>
-      <br/>
-      <br/>
+      <br />
+      <br />
     </div>
 
 
