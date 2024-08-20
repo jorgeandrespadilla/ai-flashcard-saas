@@ -2,15 +2,15 @@
 
 import { useRef, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { Card, CardActionArea, TextField, Container, Typography, Paper, Button, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CardContent } from '@mui/material';
+import { Card, CardActionArea, Container, Typography, CardContent } from '@mui/material';
 import { Box } from '@mui/system';
 import { useRouter } from 'next/navigation';
 import { writeBatch, doc, collection, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase'
 import { CardFlipStatus, FlashcardData, FlashcardCollection } from '@/lib/types';
-import { StickyHeader } from '../../page';
 import { ArrowDownToLine, ChevronRight, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { StickyHeader } from '@/app/(components)/Header';
 
 export default function Generate() {
   const { user } = useUser();

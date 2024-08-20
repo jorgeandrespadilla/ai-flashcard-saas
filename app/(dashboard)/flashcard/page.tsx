@@ -7,7 +7,7 @@ import { db } from '@/firebase'
 import { doc, getDocs, collection } from 'firebase/firestore'
 import { Card, CardActionArea, CardContent, Container, Grid, Typography, Box } from '@mui/material'
 import { CardFlipStatus, FlashcardData, FlashcardWithId } from '@/lib/types'
-import { StickyHeader } from '@/app/page'
+import { StickyHeader } from '@/app/(components)/Header'
 
 export default function Flashcard() {
   const { isLoaded, isSignedIn, user } = useUser();
