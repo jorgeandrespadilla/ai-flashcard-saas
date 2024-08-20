@@ -265,6 +265,62 @@ export default function Home() {
             <div id="pricing">
                 <Pricing handleSubscribe={handleSubscribe} />
             </div>
+            <div>
+                <section
+                    id="clients"
+                    className="text-center mx-auto max-w-[80rem] px-6 md:px-8"
+                >
+                    <div className="py-14">
+                        <div className="mx-auto max-w-screen-xl px-4 md:px-8">
+                            <h2 className="text-center text-2xl font-bold  text-black">
+                                MEET OUR TEAM
+                            </h2>
+                            <h2 className="text-lg font-bold tracking-tight text-gray-600 dark:text-white">
+                                Happy to deliver software solutions for you
+                            </h2>
+
+                            <div className="mt-6">
+                                <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-16">
+                                    <li className="flex flex-col items-center">
+                                        <img
+                                            src="/images/member_jorgeandrespadilla.jpeg"
+                                            alt="Jorge Andres Padilla"
+                                            className="h-24 w-24 rounded-full object-cover"
+                                        />
+                                        <p className="mt-2 text-center text-sm font-medium text-black">Jorge Andres Padilla</p>
+                                    </li>
+                                    <li className="flex flex-col items-center">
+                                        <img
+                                            src="/images/member_gabrielapadilla.jpeg"
+                                            alt="Gabriela Padilla"
+                                            className="h-24 w-24 rounded-full object-cover"
+                                        />
+                                        <p className="mt-2 text-center text-sm font-medium text-black">Gabriela Padilla</p>
+                                    </li>
+                                    <li className="flex flex-col items-center">
+                                        <img
+                                            src="/images/member_jennifermena.jpeg"
+                                            alt="Jennifer Mena"
+                                            className="h-24 w-24 rounded-full object-cover"
+                                        />
+                                        <p className="mt-2 text-center text-sm font-medium text-black">Jennifer Mena</p>
+                                    </li>
+                                    <li className="flex flex-col items-center">
+                                        <img
+                                            src="/images/member_guleednuh.jpeg"
+                                            alt="Guleed Nuh"
+                                            className="h-24 w-24 rounded-full object-cover"
+                                        />
+                                        <p className="mt-2 text-center text-sm font-medium text-black">Guleed Nuh</p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br />
+                            <br />
+                        </div>
+                    </div>
+                </section>
+            </div>
 
 
         </main>
