@@ -110,8 +110,12 @@ export default function Flashcard() {
                           py: 2,
                           boxSizing: 'border-box',
                         },
-                        '& > div > div:nth-of-type(2)': {
-                          transform: 'rotateY(180deg)',
+                        "& > div > div:nth-of-type(1)": {
+                          visibility: flipped[index] ? "hidden" : "visible",
+                        },
+                        "& > div > div:nth-of-type(2)": {
+                          transform: "rotateY(180deg)",
+                          visibility: flipped[index] ? "visible" : "hidden",
                         },
                       }}
                     >
